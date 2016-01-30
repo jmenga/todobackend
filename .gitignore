@@ -10,3 +10,6 @@ venv
 # Ignore test artifacts
 src/.coverage
 src/*.xml
+
+# Ignore eggs
+src/*egg-info
