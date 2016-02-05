@@ -1,0 +1,55 @@
+app:
+  build: ../../
+  dockerfile: docker/release/Dockerfile
+  links:
+    - db
+  environment:
+    DJANGO_SETTINGS_MODULE: todobackend.settings.release
+    MYSQL_HOST: db
+    MYSQL_USER: todo
+    MYSQL_PASSWORD: password
+  volumes_from:
+    - webroot
+  command:
+    - uwsgi
+    - "--socket /var/www/todobackend/todobackend.sock"
+    - "--chmod-socket=666"
+    - "--module todobackend.wsgi"
+    - "--master"
+    - "--die-on-term"
+
+nginx:
+  image: nginx
+  volumes:
+    - ./todobackend.conf:/etc/nginx/conf.d/todobackend.conf
+  ports:
+    - "8000:8000"
+  volumes_from:
+    - webroot
+
+webroot:
+  build: ../../
+  dockerfile: docker/release/Dockerfile
+  volumes:
+    - /var/www/todobackend
+  entrypoint: "true"
+
+db:
+  image: mysql:5.6
+  expose:
+    - "3306"
+  environment:
+    MYSQL_DATABASE: todobackend
+    MYSQL_USER: todo
+    MYSQL_PASSWORD: password
+    MYSQL_ROOT_PASSWORD: password
+
+agent:
+  image: jmenga/ansible
+  volumes:
+    - ../../ansible/probe.yml:/ansible/site.yml
+  links:
+    - db
+  environment:
+    PROBE_HOST: "db"
+    PROBE_PORT: "3306"
