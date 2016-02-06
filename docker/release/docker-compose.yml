@@ -20,6 +20,8 @@ app:
 
 nginx:
   image: nginx
+  links:
+    - app
   volumes:
     - ./todobackend.conf:/etc/nginx/conf.d/todobackend.conf
   ports:
