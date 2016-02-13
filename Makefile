@@ -30,8 +30,8 @@ release:
 
 clean:
 	docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) kill
-	docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) rm -f
+	docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) rm -f -v
 	docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) kill
-	docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) rm -f
+	docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) rm -f -v
 	docker images -q -f dangling=true -f label=application=$(REPO_NAME) | xargs -I ARGS docker rmi -f ARGS
 
